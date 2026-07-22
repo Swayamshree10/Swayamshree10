@@ -1,0 +1,78 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { CourseCardComponent } from '../../components/course-card/course-card.component';
+
+@Component({
+  selector: 'app-course-list',
+  standalone: true,
+  imports: [CommonModule, CourseCardComponent],
+  templateUrl: './course-list.component.html',
+  styleUrls: ['./course-list.component.css']
+})
+export class CourseListComponent implements OnInit {
+
+  isLoading = true;
+
+  courses = [
+    {
+      id: 1,
+      name: 'Angular',
+      code: 'ANG101',
+      credits: 4,
+      gradeStatus: 'passed'
+    },
+    {
+      id: 2,
+      name: 'ASP.NET Core',
+      code: 'NET201',
+      credits: 3,
+      gradeStatus: 'failed'
+    },
+    {
+      id: 3,
+      name: 'Entity Framework',
+      code: 'EF301',
+      credits: 2,
+      gradeStatus: 'pending'
+    }
+  ];
+
+  ngOnInit(): void {
+
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 1500);
+
+  }
+
+  // trackBy improves performance by reusing DOM elements
+  trackByCourseId(index: number, course: any) {
+    return course.id;
+  }
+
+}
+
+<h2>Course List</h2>
+
+<p *ngIf="isLoading">
+    Loading courses...
+</p>
+
+<div *ngIf="!isLoading; else noCourses">
+
+    <div *ngIf="courses.length > 0">
+
+        <app-course-card
+            *ngFor="let course of courses; let i=index; trackBy: trackByCourseId"
+            [course]="course">
+        </app-course-card>
+
+    </div>
+
+</div>
+
+<ng-template #noCourses>
+
+    <p>No courses available.</p>
+
+</ng-template>

@@ -1,0 +1,83 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector: 'app-home',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.css'
+})
+export class HomeComponent {
+
+  showCourses = true;
+
+  courses = [
+    {
+      id: 1,
+      name: 'Angular Fundamentals',
+      trainer: 'John',
+      duration: '30 Hours'
+    },
+    {
+      id: 2,
+      name: 'ASP.NET Core',
+      trainer: 'David',
+      duration: '40 Hours'
+    },
+    {
+      id: 3,
+      name: 'Entity Framework Core',
+      trainer: 'Smith',
+      duration: '25 Hours'
+    },
+    {
+      id: 4,
+      name: 'Microservices',
+      trainer: 'Alice',
+      duration: '35 Hours'
+    }
+  ];
+
+}
+
+<h1>Student Course Portal</h1>
+
+<button (click)="showCourses = !showCourses">
+    Toggle Courses
+</button>
+
+<hr>
+
+<div *ngIf="showCourses">
+
+    <h2>Available Courses</h2>
+
+    <table border="1" cellpadding="10">
+
+        <tr>
+            <th>ID</th>
+            <th>Course</th>
+            <th>Trainer</th>
+            <th>Duration</th>
+        </tr>
+
+        <tr *ngFor="let course of courses">
+
+            <td>{{course.id}}</td>
+            <td>{{course.name}}</td>
+            <td>{{course.trainer}}</td>
+            <td>{{course.duration}}</td>
+
+        </tr>
+
+    </table>
+
+</div>
+
+<div *ngIf="!showCourses">
+
+    <h2>No Courses Available</h2>
+
+</div>
+

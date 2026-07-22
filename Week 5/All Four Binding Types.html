@@ -1,0 +1,100 @@
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+@Component({
+  selector: 'app-home',
+  standalone: true,
+  imports: [FormsModule],
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.css'
+})
+export class HomeComponent {
+
+  // Interpolation
+  portalName = 'Student Course Portal';
+
+  // Property Binding
+  isPortalActive = true;
+
+  // Two-Way Binding
+  searchTerm = '';
+
+  // Event Binding
+  onEnrollClick() {
+    alert('Enrollment Successful!');
+  }
+
+}
+
+<h1>{{ portalName }}</h1>
+
+<hr>
+
+<h2>Interpolation</h2>
+
+<p>Welcome to {{ portalName }}</p>
+
+<hr>
+
+<h2>Property Binding</h2>
+
+<button [disabled]="!isPortalActive">
+    Enroll Now
+</button>
+
+<hr>
+
+<h2>Event Binding</h2>
+
+<button (click)="onEnrollClick()">
+    Click to Enroll
+</button>
+
+<hr>
+
+<h2>Two-Way Binding</h2>
+
+<input
+type="text"
+placeholder="Search Course"
+[(ngModel)]="searchTerm">
+
+<p>You searched: {{ searchTerm }}</p>
+
+<app-header></app-header>
+
+<router-outlet></router-outlet>
+
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { HeaderComponent } from './components/header/header.component';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [
+    RouterOutlet,
+    HeaderComponent
+  ],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css'
+})
+export class AppComponent {
+
+}
+
+import { Routes } from '@angular/router';
+import { HomeComponent } from './pages/home/home.component';
+
+export const routes: Routes = [
+  {
+    path: '',
+    component: HomeComponent
+  }
+];
+
+// Property Binding:
+// Transfers data from the component to the view.
+
+// Two-Way Binding:
+// Transfers data between the component and the view in both directions using [(ngModel)].

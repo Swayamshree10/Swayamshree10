@@ -1,0 +1,30 @@
+angular.json
+- Configuration file for the Angular workspace. It defines project settings, build options, assets, styles, and scripts.
+
+tsconfig.json
+- Base TypeScript configuration file shared across the Angular project.
+
+tsconfig.app.json
+- TypeScript configuration used specifically for compiling the Angular application.
+
+package.json
+- Contains project information, dependencies, scripts, and npm packages required by the application.
+
+src/main.ts
+- Entry point of the Angular application. It bootstraps the root application.
+
+src/app/app.module.ts (or app.config.ts)
+- Configures the Angular application by registering components, modules, providers, and routes. In standalone projects, app.config.ts replaces app.module.ts.
+
+src/app/app.component.ts
+- Root component of the application that is loaded first when the application starts.
+
+src/index.html
+- The main HTML page that hosts the Angular application. Angular renders the root component inside this file.
+
+Compiled Application Code
+- After running "ng build", the compiled JavaScript files are generated inside the dist folder (browser folder in Angular 20).
+
+Production Budget Configuration
+- maximumWarning: Displays a warning when the application bundle size exceeds the specified limit.
+- maximumError: Stops the production build if the application bundle size exceeds the specified limit.
