@@ -1,0 +1,174 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+import { Observable, throwError } from 'rxjs';
+
+import { map, tap, catchError, retry } from 'rxjs/operators';
+
+import { Course } from '../models/course.model';
+
+@Injectable({
+  providedIn: 'root'
+})
+
+export class CourseService {
+
+  private apiUrl = "http://localhost:3000/courses";
+
+  constructor(private http: HttpClient) {}
+
+  getCourses(): Observable<Course[]> {
+
+    return this.http.get<Course[]>(this.apiUrl).pipe(
+
+      // Step 83
+      map(courses =>
+
+        courses.filter(course => course.credits > 0)
+
+      ),
+
+      // Step 85
+      tap(courses =>
+
+        console.log("Courses Loaded :", courses.length)
+
+      ),
+
+      // Step 86
+      retry(2),
+
+      // Step 84
+      catchError(err => {
+
+        console.error(err);
+
+        return throwError(() =>
+
+          new Error("Failed to load courses. Please try again.")
+
+        );
+
+      })
+
+    );
+
+  }
+
+  getCourseById(id:number):Observable<Course>{
+
+    return this.http.get<Course>(`${this.apiUrl}/${id}`);
+
+  }
+
+}
+
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { CourseService } from '../../services/course.service';
+
+import { Course } from '../../models/course.model';
+
+@Component({
+
+selector:'app-course-list',
+
+standalone:true,
+
+imports:[CommonModule],
+
+templateUrl:'./course-list.component.html',
+
+styleUrls:['./course-list.component.css']
+
+})
+
+export class CourseListComponent implements OnInit{
+
+courses:Course[]=[];
+
+errorMessage='';
+
+isLoading=true;
+
+constructor(private courseService:CourseService){}
+
+ngOnInit(){
+
+this.courseService.getCourses().subscribe({
+
+next:(courses)=>{
+
+this.courses=courses;
+
+},
+
+error:(err)=>{
+
+this.errorMessage=err.message;
+
+this.isLoading=false;
+
+},
+
+complete:()=>{
+
+this.isLoading=false;
+
+}
+
+});
+
+}
+
+}
+<h2>Course List</h2>
+
+<div *ngIf="isLoading">
+
+Loading Courses...
+
+</div>
+
+<div
+*ngIf="errorMessage"
+style="color:red;">
+
+{{errorMessage}}
+
+</div>
+
+<table
+border="1"
+*ngIf="!isLoading && !errorMessage">
+
+<tr>
+
+<th>ID</th>
+
+<th>Name</th>
+
+<th>Code</th>
+
+<th>Credits</th>
+
+<th>Status</th>
+
+</tr>
+
+<tr *ngFor="let course of courses">
+
+<td>{{course.id}}</td>
+
+<td>{{course.name}}</td>
+
+<td>{{course.code}}</td>
+
+<td>{{course.credits}}</td>
+
+<td>{{course.gradeStatus}}</td>
+
+</tr>
+
+</table>

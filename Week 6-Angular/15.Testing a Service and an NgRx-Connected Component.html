@@ -1,0 +1,298 @@
+import { TestBed } from '@angular/core/testing';
+
+import {
+  HttpClientTestingModule,
+  HttpTestingController
+} from '@angular/common/http/testing';
+
+import { CourseService } from './course.service';
+import { Course } from '../models/course.model';
+
+describe('CourseService', () => {
+
+  let service: CourseService;
+
+  let httpMock: HttpTestingController;
+
+  const mockCourses: Course[] = [
+
+    {
+      id:1,
+      name:'Angular',
+      code:'ANG101',
+      credits:4,
+      gradeStatus:'passed'
+    },
+
+    {
+      id:2,
+      name:'ASP.NET',
+      code:'NET201',
+      credits:3,
+      gradeStatus:'pending'
+    }
+
+  ];
+
+  beforeEach(() => {
+
+    TestBed.configureTestingModule({
+
+      imports:[HttpClientTestingModule],
+
+      providers:[CourseService]
+
+    });
+
+    service = TestBed.inject(CourseService);
+
+    httpMock = TestBed.inject(HttpTestingController);
+
+  });
+
+  afterEach(() => {
+
+    httpMock.verify();
+
+  });
+
+  // Step 106
+  it('should create service', () => {
+
+    expect(service).toBeTruthy();
+
+  });
+
+  // Step 107
+  it('should return courses', () => {
+
+    service.getCourses().subscribe(courses => {
+
+      expect(courses.length).toBe(2);
+
+      expect(courses).toEqual(mockCourses);
+
+    });
+
+    const req = httpMock.expectOne(
+
+      'http://localhost:3000/courses'
+
+    );
+
+    expect(req.request.method).toBe('GET');
+
+    req.flush(mockCourses);
+
+  });
+
+  // Step 108
+  it('should handle server error', () => {
+
+    service.getCourses().subscribe({
+
+      next:()=>fail('Expected Error'),
+
+      error:(err)=>{
+
+        expect(err.message)
+
+        .toContain('Failed to load courses');
+
+      }
+
+    });
+
+    const req = httpMock.expectOne(
+
+      'http://localhost:3000/courses'
+
+    );
+
+    req.flush(
+
+      'Server Error',
+
+      {
+
+        status:500,
+
+        statusText:'Internal Server Error'
+
+      }
+
+    );
+
+  });
+
+});
+
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { provideMockStore, MockStore }
+
+from '@ngrx/store/testing';
+
+import { By } from '@angular/platform-browser';
+
+import { CourseListComponent }
+
+from './course-list.component';
+
+describe('CourseListComponent',()=>{
+
+let component:CourseListComponent;
+
+let fixture:ComponentFixture<CourseListComponent>;
+
+let store:MockStore;
+
+const mockCourses=[
+
+{
+
+id:1,
+
+name:'Angular',
+
+code:'ANG101',
+
+credits:4,
+
+gradeStatus:'passed'
+
+},
+
+{
+
+id:2,
+
+name:'ASP.NET',
+
+code:'NET201',
+
+credits:3,
+
+gradeStatus:'pending'
+
+}
+
+];
+
+beforeEach(async()=>{
+
+await TestBed.configureTestingModule({
+
+imports:[CourseListComponent],
+
+providers:[
+
+provideMockStore({
+
+initialState:{
+
+course:{
+
+courses:mockCourses,
+
+loading:false,
+
+error:null
+
+}
+
+}
+
+})
+
+]
+
+}).compileComponents();
+
+store=TestBed.inject(MockStore);
+
+fixture=TestBed.createComponent(
+
+CourseListComponent
+
+);
+
+component=fixture.componentInstance;
+
+fixture.detectChanges();
+
+});
+
+it('should create',()=>{
+
+expect(component).toBeTruthy();
+
+});
+
+
+// Step 109
+
+it('should render all courses',()=>{
+
+fixture.detectChanges();
+
+const cards=
+
+fixture.debugElement.queryAll(
+
+By.css('app-course-card')
+
+);
+
+expect(cards.length).toBe(2);
+
+});
+
+
+// Step 110
+
+it('should show loading indicator',()=>{
+
+store.setState({
+
+course:{
+
+courses:[],
+
+loading:true,
+
+error:null
+
+}
+
+});
+
+fixture.detectChanges();
+
+const loading=
+
+fixture.nativeElement.textContent;
+
+expect(loading)
+
+.toContain('Loading');
+
+});
+
+});
+
+<div class="card">
+
+    <h3>{{course.name}}</h3>
+
+    <p>{{course.code}}</p>
+
+    <p>{{course.credits}}</p>
+
+    <button (click)="enroll()">
+
+        Enroll
+
+    </button>
+
+</div>

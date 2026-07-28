@@ -1,0 +1,144 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { SimpleChange, SimpleChanges } from '@angular/core';
+
+import { CourseCardComponent } from './course-card.component';
+import { Course } from '../../models/course.model';
+
+describe('CourseCardComponent', () => {
+
+  let component: CourseCardComponent;
+  let fixture: ComponentFixture<CourseCardComponent>;
+
+  const mockCourse: Course = {
+    id: 1,
+    name: 'Data Structures',
+    code: 'CS101',
+    credits: 4,
+    gradeStatus: 'passed'
+  };
+
+  beforeEach(async () => {
+
+    await TestBed.configureTestingModule({
+
+      imports: [CourseCardComponent]
+
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(CourseCardComponent);
+
+    component = fixture.componentInstance;
+
+    fixture.detectChanges();
+
+  });
+
+  // Task 102
+  it('should create', () => {
+
+    expect(component).toBeTruthy();
+
+  });
+
+  // Task 103
+  it('should render course name from @Input', () => {
+
+    component.course = mockCourse;
+
+    fixture.detectChanges();
+
+    const heading = fixture.debugElement.query(By.css('h3'));
+
+    expect(heading.nativeElement.textContent)
+      .toContain('Data Structures');
+
+  });
+
+  // Task 104
+  it('should emit enrollRequested when button is clicked', () => {
+
+    component.course = mockCourse;
+
+    fixture.detectChanges();
+
+    spyOn(component.enrollRequested, 'emit');
+
+    const button = fixture.debugElement.query(By.css('button'));
+
+    button.nativeElement.click();
+
+    fixture.detectChanges();
+
+    expect(component.enrollRequested.emit)
+      .toHaveBeenCalledWith(1);
+
+  });
+
+  // Task 105
+  it('should call ngOnChanges', () => {
+
+    spyOn(console, 'log');
+
+    component.ngOnChanges({
+
+      course: new SimpleChange(
+
+        null,
+
+        mockCourse,
+
+        true
+
+      )
+
+    } as SimpleChanges);
+
+    expect(console.log).toHaveBeenCalled();
+
+  });
+
+  // Additional test
+  it('should display course code', () => {
+
+    component.course = mockCourse;
+
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent;
+
+    expect(text).toContain('CS101');
+
+  });
+
+});
+@Input() course!: Course;
+
+@Output() enrollRequested = new EventEmitter<number>();
+
+enroll(){
+
+  this.enrollRequested.emit(this.course.id);
+
+}
+
+ngOnChanges(changes: SimpleChanges){
+
+  console.log('Course Changed', changes);
+
+}
+<div class="card">
+
+    <h3>{{course.name}}</h3>
+
+    <p>{{course.code}}</p>
+
+    <p>{{course.credits}}</p>
+
+    <button (click)="enroll()">
+
+        Enroll
+
+    </button>
+
+</div>

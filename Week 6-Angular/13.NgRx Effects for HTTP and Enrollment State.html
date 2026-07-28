@@ -1,0 +1,195 @@
+import {
+
+createFeatureSelector,
+
+createSelector
+
+} from '@ngrx/store';
+
+import { EnrollmentState } from './enrollment.reducer';
+
+import {
+
+selectAllCourses
+
+} from '../course/course.selectors';
+
+export const selectEnrollmentState=
+
+createFeatureSelector<EnrollmentState>(
+
+'enrollment'
+
+);
+
+export const selectEnrolledIds=
+
+createSelector(
+
+selectEnrollmentState,
+
+(state)=>state.enrolledCourseIds
+
+);
+
+export const selectEnrolledCourses=
+
+createSelector(
+
+selectAllCourses,
+
+selectEnrolledIds,
+
+(courses,enrolledIds)=>
+
+courses.filter(course=>
+
+enrolledIds.includes(course.id)
+
+)
+
+);
+import { enrollmentReducer }
+
+from './store/enrollment/enrollment.reducer';
+
+providers:[
+
+provideStore(),
+
+provideState(
+
+'course',
+
+courseReducer
+
+),
+
+provideState(
+
+'enrollment',
+
+enrollmentReducer
+
+),
+
+provideEffects([
+
+CourseEffects
+
+])
+
+]
+
+import { Component,Input } from '@angular/core';
+
+import { Store } from '@ngrx/store';
+
+import { Observable } from 'rxjs';
+
+import { Course } from '../../models/course.model';
+
+import {
+
+selectEnrolledIds
+
+}
+
+from '../../store/enrollment/enrollment.selectors';
+
+import * as EnrollmentActions
+
+from '../../store/enrollment/enrollment.actions';
+
+@Component({
+
+selector:'app-course-card',
+
+standalone:true,
+
+templateUrl:'./course-card.component.html'
+
+})
+
+export class CourseCardComponent{
+
+@Input()
+
+course!:Course;
+
+enrolledIds$!:Observable<number[]>;
+
+constructor(private store:Store){
+
+this.enrolledIds$=
+
+this.store.select(
+
+selectEnrolledIds
+
+);
+
+}
+
+toggleEnrollment(
+
+isEnrolled:boolean
+
+){
+
+if(isEnrolled){
+
+this.store.dispatch(
+
+EnrollmentActions.unenrollFromCourse({
+
+courseId:this.course.id
+
+})
+
+);
+
+}
+
+else{
+
+this.store.dispatch(
+
+EnrollmentActions.enrollInCourse({
+
+courseId:this.course.id
+
+})
+
+);
+
+}
+
+}
+
+}
+<div class="card">
+
+<h3>{{course.name}}</h3>
+
+<p>{{course.code}}</p>
+
+<p>{{course.credits}}</p>
+
+<div *ngIf="enrolledIds$ | async as enrolledIds">
+
+<button
+
+(click)="toggleEnrollment(enrolledIds.includes(course.id))">
+
+{{ enrolledIds.includes(course.id)
+
+? 'Unenroll'
+
+: 'Enroll' }}
+
+</button>
+
+</div>
+
+</div>

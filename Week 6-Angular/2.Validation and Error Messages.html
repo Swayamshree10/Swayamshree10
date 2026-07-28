@@ -1,0 +1,246 @@
+import { Component } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector: 'app-enrollment-form',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './enrollment-form.component.html',
+  styleUrls: ['./enrollment-form.component.css']
+})
+export class EnrollmentFormComponent {
+
+  studentName = '';
+  studentEmail = '';
+  courseId: number | null = null;
+  preferredSemester = '';
+  agreeToTerms = false;
+
+  submitted = false;
+
+  onSubmit(form: NgForm) {
+    console.log(form.value);
+    console.log(form.valid);
+
+    if (form.valid) {
+      this.submitted = true;
+    }
+  }
+
+}
+<h2>Enrollment Request Form</h2>
+
+<form #enrollForm="ngForm"
+      (ngSubmit)="onSubmit(enrollForm)">
+
+    <!-- Student Name -->
+
+    <label>Student Name</label><br>
+
+    <input
+        type="text"
+        name="studentName"
+        [(ngModel)]="studentName"
+        #nameCtrl="ngModel"
+        required
+        minlength="3">
+
+    <br>
+
+    <span
+        *ngIf="nameCtrl.touched && nameCtrl.errors?.['required']"
+        style="color:red">
+
+        Name is required
+
+    </span>
+
+    <span
+        *ngIf="nameCtrl.touched && nameCtrl.errors?.['minlength']"
+        style="color:red">
+
+        Name must be at least 3 characters
+
+    </span>
+
+    <br><br>
+
+    <!-- Email -->
+
+    <label>Email</label><br>
+
+    <input
+        type="email"
+        name="studentEmail"
+        [(ngModel)]="studentEmail"
+        #emailCtrl="ngModel"
+        required
+        email>
+
+    <br>
+
+    <span
+        *ngIf="emailCtrl.touched && emailCtrl.errors?.['required']"
+        style="color:red">
+
+        Email is required
+
+    </span>
+
+    <span
+        *ngIf="emailCtrl.touched && emailCtrl.errors?.['email']"
+        style="color:red">
+
+        Enter a valid email
+
+    </span>
+
+    <br><br>
+
+    <!-- Course ID -->
+
+    <label>Course ID</label><br>
+
+    <input
+        type="number"
+        name="courseId"
+        [(ngModel)]="courseId"
+        #courseCtrl="ngModel"
+        required>
+
+    <br>
+
+    <span
+        *ngIf="courseCtrl.touched && courseCtrl.errors?.['required']"
+        style="color:red">
+
+        Course ID is required
+
+    </span>
+
+    <br><br>
+
+    <!-- Semester -->
+
+    <label>Preferred Semester</label><br>
+
+    <select
+        name="preferredSemester"
+        [(ngModel)]="preferredSemester"
+        required>
+
+        <option value="">Select Semester</option>
+        <option value="Odd">Odd</option>
+        <option value="Even">Even</option>
+
+    </select>
+
+    <br><br>
+
+    <!-- Checkbox -->
+
+    <label>
+
+        <input
+            type="checkbox"
+            name="agreeToTerms"
+            [(ngModel)]="agreeToTerms"
+            #termsCtrl="ngModel"
+            required>
+
+        I Agree to Terms and Conditions
+
+    </label>
+
+    <br>
+
+    <span
+        *ngIf="termsCtrl.touched && termsCtrl.errors?.['required']"
+        style="color:red">
+
+        You must agree to the terms.
+
+    </span>
+
+    <br><br>
+
+    <!-- Buttons -->
+
+    <button
+        type="submit"
+        [disabled]="enrollForm.invalid">
+
+        Submit
+
+    </button>
+
+    &nbsp;
+
+    <button
+        type="button"
+        (click)="enrollForm.resetForm()">
+
+        Reset
+
+    </button>
+
+</form>
+
+<br>
+
+<div
+    *ngIf="submitted"
+    style="color:green;font-weight:bold;">
+
+    Enrollment request submitted successfully!
+
+</div>
+h2{
+    text-align:center;
+    color:#1976d2;
+}
+
+form{
+    width:450px;
+    margin:auto;
+    border:1px solid #ccc;
+    padding:20px;
+    border-radius:8px;
+}
+
+input,
+select{
+    width:100%;
+    padding:8px;
+    margin-top:5px;
+}
+
+button{
+    padding:10px 20px;
+    background:#1976d2;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+
+button:disabled{
+    background:gray;
+    cursor:not-allowed;
+}
+
+.ng-invalid.ng-touched{
+    border:2px solid red;
+}
+
+.ng-valid.ng-touched{
+    border:2px solid green;
+}
+
+span{
+    font-size:14px;
+}
+
+div{
+    text-align:center;
+}

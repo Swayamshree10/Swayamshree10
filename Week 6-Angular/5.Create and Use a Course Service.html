@@ -1,0 +1,54 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { CourseService } from '../../services/course.service';
+
+@Component({
+  selector:'app-home',
+  standalone:true,
+  imports:[CommonModule],
+  templateUrl:'./home.component.html',
+  styleUrls:['./home.component.css']
+})
+export class HomeComponent implements OnInit{
+
+  courseCount=0;
+
+  constructor(private courseService:CourseService){}
+
+  ngOnInit(): void{
+
+    this.courseCount=this.courseService.getCourses().length;
+
+  }
+
+}
+<h2>Course List</h2>
+
+<table border="1">
+
+<tr>
+
+<th>ID</th>
+<th>Name</th>
+<th>Code</th>
+<th>Credits</th>
+<th>Status</th>
+
+</tr>
+
+<tr *ngFor="let course of courses">
+
+<td>{{course.id}}</td>
+<td>{{course.name}}</td>
+<td>{{course.code}}</td>
+<td>{{course.credits}}</td>
+<td>{{course.gradeStatus}}</td>
+
+</tr>
+
+</table>
+<h2>Home</h2>
+
+<p>Total Courses : {{courseCount}}</p>
+
+<app-course-summary-widget></app-course-summary-widget>

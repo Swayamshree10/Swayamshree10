@@ -1,0 +1,124 @@
+import { Routes } from '@angular/router';
+
+import { HomeComponent } from './pages/home/home.component';
+import { CoursesLayoutComponent } from './pages/courses-layout/courses-layout.component';
+import { CourseListComponent } from './pages/course-list/course-list.component';
+import { CourseDetailComponent } from './pages/course-detail/course-detail.component';
+import { StudentProfileComponent } from './pages/student-profile/student-profile.component';
+import { NotFoundComponent } from './pages/not-found/not-found.component';
+
+export const routes: Routes = [
+
+  {
+    path: '',
+    component: HomeComponent
+  },
+
+  {
+    path: 'courses',
+    component: CoursesLayoutComponent,
+
+    children: [
+
+      {
+        path: '',
+        component: CourseListComponent
+      },
+
+      {
+        path: ':id',
+        component: CourseDetailComponent
+      }
+
+    ]
+
+  },
+
+  {
+    path: 'profile',
+    component: StudentProfileComponent
+  },
+
+  {
+    path: '**',
+    component: NotFoundComponent
+  }
+
+];
+
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { CommonModule } from '@angular/common';
+
+import { CourseService } from '../../services/course.service';
+import { Course } from '../../models/course.model';
+
+@Component({
+  selector: 'app-course-detail',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './course-detail.component.html',
+  styleUrls: ['./course-detail.component.css']
+})
+export class CourseDetailComponent implements OnInit {
+
+  course?: Course;
+
+  constructor(
+
+    private route: ActivatedRoute,
+    private courseService: CourseService
+
+  ) {}
+
+  ngOnInit(): void {
+
+    const id = Number(
+
+      this.route.snapshot.paramMap.get('id')
+
+    );
+
+    this.course = this.courseService.getCourseById(id);
+
+  }
+
+}
+<div *ngIf="course">
+
+    <h2>Course Details</h2>
+
+    <p><b>ID :</b> {{course.id}}</p>
+
+    <p><b>Name :</b> {{course.name}}</p>
+
+    <p><b>Code :</b> {{course.code}}</p>
+
+    <p><b>Credits :</b> {{course.credits}}</p>
+
+    <p><b>Status :</b> {{course.gradeStatus}}</p>
+
+</div>
+
+<div *ngIf="!course">
+
+    <h2>Course Not Found</h2>
+
+</div>
+
+h2{
+
+color:#1976d2;
+
+}
+
+p{
+
+font-size:18px;
+
+}
+<h2>Courses Portal</h2>
+
+<hr>
+
+<router-outlet></router-outlet>

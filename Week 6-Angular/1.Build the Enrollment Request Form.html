@@ -1,0 +1,100 @@
+import { Component } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
+
+@Component({
+  selector: 'app-enrollment-form',
+  standalone: true,
+  imports: [FormsModule],
+  templateUrl: './enrollment-form.component.html',
+  styleUrl: './enrollment-form.component.css'
+})
+export class EnrollmentFormComponent {
+
+  studentName = '';
+  studentEmail = '';
+  courseId: number | null = null;
+  preferredSemester = '';
+  agreeToTerms = false;
+
+  onSubmit(form: NgForm) {
+    console.log(form.value);
+    console.log(form.valid);
+  }
+
+}import { Routes } from '@angular/router';
+import { EnrollmentFormComponent } from './pages/enrollment-form/enrollment-form.component';
+
+export const routes: Routes = [
+  {
+    path: 'enroll',
+    component: EnrollmentFormComponent
+  }
+];
+
+<h2>Enrollment Request Form</h2>
+
+<form #enrollForm="ngForm" (ngSubmit)="onSubmit(enrollForm)">
+
+  <label>Student Name</label>
+  <input
+    type="text"
+    name="studentName"
+    [(ngModel)]="studentName"
+    required>
+
+  <br><br>
+
+  <label>Email</label>
+  <input
+    type="email"
+    name="studentEmail"
+    [(ngModel)]="studentEmail"
+    required>
+
+  <br><br>
+
+  <label>Course ID</label>
+  <input
+    type="number"
+    name="courseId"
+    [(ngModel)]="courseId"
+    required>
+
+  <br><br>
+
+  <label>Preferred Semester</label>
+
+  <select
+    name="preferredSemester"
+    [(ngModel)]="preferredSemester"
+    required>
+
+    <option value="">Select</option>
+    <option value="Odd">Odd</option>
+    <option value="Even">Even</option>
+
+  </select>
+
+  <br><br>
+
+  <label>
+    <input
+      type="checkbox"
+      name="agreeToTerms"
+      [(ngModel)]="agreeToTerms"
+      required>
+
+    Agree to Terms
+  </label>
+
+  <br><br>
+
+  <button
+    type="submit"
+    [disabled]="enrollForm.invalid">
+
+    Submit
+
+  </button>
+
+</form>

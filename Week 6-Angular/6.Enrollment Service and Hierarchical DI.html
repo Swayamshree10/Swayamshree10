@@ -1,0 +1,78 @@
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { Course } from '../../models/course.model';
+import { EnrollmentService } from '../../services/enrollment.service';
+
+@Component({
+  selector: 'app-course-card',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './course-card.component.html',
+  styleUrls: ['./course-card.component.css']
+})
+export class CourseCardComponent {
+
+  @Input() course!: Course;
+
+  constructor(
+    public enrollmentService: EnrollmentService
+  ) {}
+
+  toggleEnrollment() {
+
+    if (this.enrollmentService.isEnrolled(this.course.id)) {
+
+      this.enrollmentService.unenroll(this.course.id);
+
+    }
+
+    else {
+
+      this.enrollmentService.enroll(this.course.id);
+
+    }
+
+  }
+
+}
+<div class="card">
+
+<h3>{{course.name}}</h3>
+
+<p>ID : {{course.id}}</p>
+
+<p>Code : {{course.code}}</p>
+
+<p>Credits : {{course.credits}}</p>
+
+<p>Status : {{course.gradeStatus}}</p>
+
+<button (click)="toggleEnrollment()">
+
+{{ enrollmentService.isEnrolled(course.id)
+? 'Unenroll'
+: 'Enroll' }}
+
+</button>
+
+</div>
+.card{
+
+border:1px solid gray;
+
+padding:15px;
+
+margin:15px;
+
+border-radius:8px;
+
+}
+
+button{
+
+padding:8px 15px;
+
+cursor:pointer;
+
+}

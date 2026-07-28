@@ -1,0 +1,214 @@
+import { createReducer,on } from '@ngrx/store';
+
+import * as CourseActions from './course.actions';
+
+import { Course } from '../../models/course.model';
+
+export interface CourseState{
+
+courses:Course[];
+
+loading:boolean;
+
+error:string|null;
+
+}
+
+export const initialState:CourseState={
+
+courses:[],
+
+loading:false,
+
+error:null
+
+};
+
+export const courseReducer=createReducer(
+
+initialState,
+
+on(
+
+CourseActions.loadCourses,
+
+(state)=>({
+
+...state,
+
+loading:true,
+
+error:null
+
+})
+
+),
+
+on(
+
+CourseActions.loadCoursesSuccess,
+
+(state,{courses})=>({
+
+...state,
+
+courses,
+
+loading:false
+
+})
+
+),
+
+on(
+
+CourseActions.loadCoursesFailure,
+
+(state,{error})=>({
+
+...state,
+
+loading:false,
+
+error
+
+})
+
+)
+
+);
+
+import {
+
+createFeatureSelector,
+
+createSelector
+
+} from '@ngrx/store';
+
+import { CourseState } from './course.reducer';
+
+export const selectCourseState=
+
+createFeatureSelector<CourseState>('course');
+
+export const selectAllCourses=
+
+createSelector(
+
+selectCourseState,
+
+(state)=>state.courses
+
+);
+
+export const selectCoursesLoading=
+
+createSelector(
+
+selectCourseState,
+
+(state)=>state.loading
+
+);
+
+export const selectCoursesError=
+
+createSelector(
+
+selectCourseState,
+
+(state)=>state.error
+
+);
+
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+
+import { Course } from '../../models/course.model';
+
+import * as CourseActions from '../../store/course/course.actions';
+
+import {
+  selectAllCourses,
+  selectCoursesLoading,
+  selectCoursesError
+} from '../../store/course/course.selectors';
+
+import { CourseCardComponent } from '../course-card/course-card.component';
+
+@Component({
+  selector: 'app-course-list',
+  standalone: true,
+  imports: [
+    CommonModule,
+    CourseCardComponent
+  ],
+  templateUrl: './course-list.component.html',
+  styleUrls: ['./course-list.component.css']
+})
+export class CourseListComponent implements OnInit {
+
+  courses$!: Observable<Course[]>;
+
+  loading$!: Observable<boolean>;
+
+  error$!: Observable<string | null>;
+
+  constructor(private store: Store) {}
+
+  ngOnInit(): void {
+
+    this.courses$ = this.store.select(selectAllCourses);
+
+    this.loading$ = this.store.select(selectCoursesLoading);
+
+    this.error$ = this.store.select(selectCoursesError);
+
+    this.store.dispatch(CourseActions.loadCourses());
+
+  }
+
+}
+<h2>Course List</h2>
+
+<div *ngIf="loading$ | async">
+
+Loading Courses...
+
+</div>
+
+<div
+style="color:red"
+*ngIf="error$ | async as error">
+
+{{error}}
+
+</div>
+
+<div *ngIf="courses$ | async as courses">
+
+<app-course-card
+
+*ngFor="let c of courses"
+
+[course]="c">
+
+</app-course-card>
+
+</div>
+h2{
+
+text-align:center;
+
+color:#1976d2;
+
+}
+
+div{
+
+margin:10px;
+
+}

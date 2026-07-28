@@ -1,0 +1,102 @@
+import { ApplicationConfig } from '@angular/core';
+
+import { provideRouter } from '@angular/router';
+
+import {
+
+provideHttpClient,
+
+withInterceptors
+
+} from '@angular/common/http';
+
+import { routes } from './app.routes';
+
+import { authInterceptor } from './interceptors/auth.interceptor';
+
+import { errorHandlerInterceptor } from './interceptors/error-handler.interceptor';
+
+import { loadingInterceptor } from './interceptors/loading.interceptor';
+
+export const appConfig:ApplicationConfig={
+
+providers:[
+
+provideRouter(routes),
+
+provideHttpClient(
+
+withInterceptors([
+
+authInterceptor,
+
+errorHandlerInterceptor,
+
+loadingInterceptor
+
+])
+
+)
+
+]
+
+};
+import { Component } from '@angular/core';
+
+import { CommonModule } from '@angular/common';
+
+import { RouterOutlet } from '@angular/router';
+
+import { LoadingService } from './services/loading.service';
+
+@Component({
+
+selector:'app-root',
+
+standalone:true,
+
+imports:[CommonModule,RouterOutlet],
+
+templateUrl:'./app.component.html',
+
+styleUrls:['./app.component.css']
+
+})
+
+export class AppComponent{
+
+constructor(public loadingService:LoadingService){}
+
+}
+<div
+class="loading"
+*ngIf="loadingService.isLoading$ | async">
+
+Loading...
+
+</div>
+
+<router-outlet></router-outlet>
+.loading{
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+right:0;
+
+padding:15px;
+
+background:#1976d2;
+
+color:white;
+
+text-align:center;
+
+font-weight:bold;
+
+z-index:1000;
+
+}
